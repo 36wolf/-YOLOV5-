@@ -1,7 +1,13 @@
 import ollama
 import requests
 import pyttsx3
+import json
+import pyaudio
+import numpy as np
+from vosk import Model, KaldiRecognizer, SetLogLevel
 import re
+from 实时语音识别 import SaveWave
+
 https_= "127.0.0.1：11434"
 class Solution:
     def message(self,problem):
@@ -68,11 +74,16 @@ class Solution:
         # 初始化一个列表来存储对话历史，每个元素是一个包含用户输入和模型回复的元组
         history = []
         while True:
+            user_input = SaveWave(model)
             # 获取用户输入，并转换为小写，方便后续判断退出条件
-            user_input = input("\nUser: ")
+            # user_input = input("\nUser: ")
             # 判断用户是否想要退出对话
-            if user_input.lower() in ["exit", "quit", "stop", "baibai", "拜拜"]:
+            print(user_input)
+            if user_input.lower() in ["exit", "quit", "stop", "baibai", "拜拜","退出"]:
                 break
+            elif user_input == "" or user_input == None:
+                break
+
 
             # 将用户输入和一个空字符串（用于后续存储模型回复）作为元组添加到历史记录中
             history.append([user_input, ""])
@@ -109,28 +120,12 @@ class Solution:
             # 更新history中最新用户输入的模型回复
             history[-1][1] = output['message']['content']
 
-
+model = Model("vosk-model-cn-0.15")
+SetLogLevel(-1)
+res = SaveWave(model)
 s1 = Solution()
-
-
 s1.chat_with_ollama()
 
-# while(1):
-#     problem = input("请输入问题：")
-#     if problem == '':
-#         break
-#     else:
-#         word = s1.message(problem)
-#         print(word)
-#         word = str(word)
-#         word = word.replace("<think>","")
-#         word = word.replace("</think>","")
-#         word = word.replace('\n', "")
-#         w = [word]
-#         #写一首诗
-#         # print(w) #字符串
-#         s1.use_pyttsx3(w)
-#         # answer = s1.message(problem)
-#         # print(answer)
+
 
 
